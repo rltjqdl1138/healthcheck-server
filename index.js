@@ -38,8 +38,10 @@ app.post("/",(req, res)=>{
     const { port, info, tags} = req.body
     const key = remoteAddress + ":" + port
     if( port ){
-        const tagList = !map[key] && !tags ? [] : tags
-        map[key] = { ...map[key], info, tags:tagList, ttl: 10 }
+        map[key] = { ...map[key],
+            info    : info || map[key].info,
+            tags    : tags || map[key].tags || [],
+            ttl: 10 }
         console.log(map[key])
     }
 
