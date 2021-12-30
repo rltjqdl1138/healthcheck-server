@@ -38,7 +38,8 @@ app.post("/",(req, res)=>{
     const { port, info, tags} = req.body
     const key = remoteAddress + ":" + port
     if( port ){
-        map[key] = { ...map[key], info, tags, ttl: 10 }
+        const tagList = !map[key] && !tags ? [] : tags
+        map[key] = { ...map[key], info, tags:tagList, ttl: 10 }
         console.log(map[key])
     }
 
@@ -59,21 +60,21 @@ app.listen( 9001, ()=>console.log('Server is running on 9001'))
 
 
 const map = {
-    "127.0.0.1:8000":{
+    "123.123.123.123:8000":{
         info:"gameserver",
-        tags:["game","game1"]
+        tags:["game"]
     },
-    
-    "127.0.0.1:8001":{
+    "123.123.123.123:8001":{
         info:"gameserver",
-        tags:["game","game2"]
+        tags:["game"]
     },
-    
-    "127.0.0.1:8002":{
-        info:"server",
-        tags:["server"]
-    }
+    "123.123.123.123:8002":{
+        info:"gameserver",
+        tags:["game"]
+    },
 }
+
+
 
 class distributor extends require('./tcpServer.js'){
     constructor(port=9000){
