@@ -5,7 +5,6 @@ app.use(express.json())
 app.use(express.urlencoded({extended:false}))
 
 app.get("/*",(req, res)=>{
-    console.log(req.headers)
     let tags = []
     const path = req.url.split("/")[1]
     if(path.length)
@@ -35,11 +34,12 @@ app.get("/*",(req, res)=>{
     res.end(JSON.stringify({list}))
 })
 app.post("/",(req, res)=>{
-    const key = req.socket.remoteAddress + ":" + req.socket.remotePort
-    const { address, port, info, tags} = req.body
-    if(address && port ){
-        const key = address + ":" + port
+    const remoteAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+    const { port, info, tags} = req.body
+    const key = remoteAddress + ":" + port
+    if( port ){
         map[key] = { ...map[key], info, tags, ttl: 10 }
+        console.log(map[key])
     }
 
     const list = Object.keys(map).map( item => {
