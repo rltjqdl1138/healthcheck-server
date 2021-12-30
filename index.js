@@ -14,17 +14,17 @@ app.get("/*",(req, res)=>{
 
         if(tags.length == 0)
             return [...prev, {
+                ...map[item],
                 address: parsed_key[0],
                 port:    parsed_key[1],
-                ...map[item]
             }]
 
         for( const i in tags){
             if( map[item].tags.includes(tags[i]) )
                 return [...prev, {
+                    ...map[item],
                     address: parsed_key[0],
                     port:    parsed_key[1],
-                    ...map[item]
                 }]
         }
         return prev
