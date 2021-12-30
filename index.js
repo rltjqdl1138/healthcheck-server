@@ -5,6 +5,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended:false}))
 
 app.get("/*",(req, res)=>{
+    console.log(req.headers)
     let tags = []
     const path = req.url.split("/")[1]
     if(path.length)
