@@ -1,21 +1,61 @@
-const http = require('http')
+const express = require('express')
+const app = express()
 
-const webServer = http.createServer((req, res)=>{
-    res.setHeader('Content-Type', 'application/json');
+app.use(express.json())
+app.use(express.urlencoded({extended:false}))
+
+app.get("/*",(req, res)=>{
+    let tags = []
+    const path = req.url.split("/")[1]
+    if(path.length)
+        tags = [...path.split(",")]
     const list = Object.keys(map).reduce( (prev, item) => {
         const parsed_key = item.split(":")
-        return map[item].tags.includes("game") ?
-            [...prev, {
+
+        if(tags.length == 0)
+            return [...prev, {
                 address: parsed_key[0],
-                port: parsed_key[1],
+                port:    parsed_key[1],
                 ...map[item]
-            }] : prev
+            }]
+
+        for( const i in tags){
+            if( map[item].tags.includes(tags[i]) )
+                return [...prev, {
+                    address: parsed_key[0],
+                    port:    parsed_key[1],
+                    ...map[item]
+                }]
+        }
+        return prev
     },[])
+
+    res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({list}))
 })
-webServer.listen(9001, ()=>{
-    console.log('Server is running on 9001')
+app.post("/",(req, res)=>{
+    const key = req.socket.remoteAddress + ":" + req.socket.remotePort
+    const { address, port, info, tags} = req.body
+    if(address && port ){
+        const key = address + ":" + port
+        map[key] = { ...map[key], info, tags, ttl: 10 }
+    }
+
+    const list = Object.keys(map).map( item => {
+        const parsed_key = item.split(":")
+        return  {
+            address: parsed_key[0],
+            port: parsed_key[1],
+            ...map[item]
+        }
+    },[])
+
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({list}))
 })
+
+app.listen( 9001, ()=>console.log('Server is running on 9001'))
+
 
 const map = {
     "127.0.0.1:8000":{
