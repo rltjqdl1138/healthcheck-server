@@ -44,7 +44,6 @@ app.post("/",(req, res)=>{
             info    : info || map[key].info,
             tags    : tags || map[key].tags || [],
             ttl: 10 }
-        console.log(map[key])
     }
 
     const list = Object.keys(map).map( item => {
@@ -66,6 +65,7 @@ const decreaseTTL = ()=>{
     Object.keys(map).forEach(e=>{
         if(map[e].ttl < 0) delete map[e]
         else map[e].ttl = map[e].ttl - 1
+        console.log(`[${e}] ${map[e].ttl}`)
     })
 }
 

@@ -1,9 +1,11 @@
 const express = require('express')
 const fs = require('fs')
 const fetch = require('node-fetch')
+const cron = require('node-cron')
+
 const app = express()
 const PORT = 9002
-
+const HEALTH_URL = "http://192.168.0.19"//"http://192.168.0.52"
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
 
@@ -17,23 +19,21 @@ app.listen( PORT, ()=>{
     postRequestToHealthServer()
     console.log('Admin Server is running on 9002')
 })
-
+cron("*/10 * * * * *", postRequestToHealthServer)
 
 function postRequestToHealthServer(){
     const data = {
         port:PORT,
         info:"Admin Server",
-        tags:[]
+        tags:["admin"]
     }
-    fetch("http://192.168.0.52",{
+    fetch(HEALTH_URL,{
             headers: { 'Content-Type': 'application/json' },
             method: 'POST',
             body: JSON.stringify(data),
         })
         .then(res => res.json())
-        .then(json =>{
-            console.log(json)
-        })
+        .then(json =>{})
 }
 
 function getConfig(){
