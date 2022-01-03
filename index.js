@@ -62,11 +62,13 @@ app.post("/",(req, res)=>{
 app.listen( 9001, ()=>console.log('Server is running on 9001'))
 cron.schedule("*/10 * * * * *", ()=>decreaseTTL())
 const decreaseTTL = ()=>{
+    console.log(`============= Server Status =============`)
     Object.keys(map).forEach(e=>{
         if(map[e].ttl < 0) delete map[e]
         else map[e].ttl = map[e].ttl - 1
         console.log(`[${e}] ${map[e].ttl}`)
     })
+    console.log(`=========================================\n`)
 }
 
 
