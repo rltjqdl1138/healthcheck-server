@@ -9,11 +9,38 @@ const HEALTH_URL = "http://192.168.0.52"
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
 
-const config = getConfig()
+let config = getConfig()
+const map = {}
 
+app.get('/notice',(req, res)=>{
+    const now = new Date()
+    res.json({
+        title:  "정기점검안내",
+        content:"정기점검 중입니다.",
+        regdate: now.toISOString()
+    })
+})
 
-app.get('/', (req, res)=>{
+app.get('/config', (req, res)=>{
     res.json(config)
+})
+app.post('/config',async (req, res)=>{
+    const {serverCheck, checkEndedAt} = req.body
+    config.serverCheck = serverCheck
+    if(serverCheck){
+        const now = new Date()
+        config.checkStartedAt = now.toISOString()
+        config.checkEndedAt = checkEndedAt
+    }
+    setConfig(config)
+
+    const wasList = await getRequestToHealthServer()
+    wasList.forEach(e=>{
+        const url = `http://${e.address}:${e.port}/v1/configuration`
+        console.log(url)
+        putRequestToWASServer(url)
+    })
+    res.end()
 })
 app.listen( PORT, ()=>{
     postRequestToHealthServer()
@@ -32,18 +59,39 @@ function postRequestToHealthServer(){
             method: 'POST',
             body: JSON.stringify(data),
         })
-        .then(res => res.json())
-        .then(json =>{})
 }
+
+function putRequestToWASServer(url){
+    fetch(url,{
+            headers: { 'Content-Type': 'application/json' },
+            method: 'PUT',
+            body: JSON.stringify(config),
+        })
+}
+function getRequestToHealthServer(){
+    return new Promise((resolve, reject)=>{
+        fetch(HEALTH_URL+"/was",{
+            headers: { 'Content-Type': 'application/json' },
+            method: 'GET'
+        })
+        .then(res => res.json())
+        .then(json => resolve(json.list))
+    })
+}
+
 
 function getConfig(){
     if (!fs.existsSync(__dirname + "/config.json")){
-        data = {
+        const data = {
             serverCheck: false
         }
-        fs.writeFileSync(__dirname + "/config.json", JSON.stringify( data ))
+        setConfig(data)
     }
     
     const str = fs.readFileSync(__dirname + "/config.json")
     return JSON.parse(str)
+}
+
+function setConfig(data){
+    fs.writeFileSync(__dirname + "/config.json", JSON.stringify( data ))
 }

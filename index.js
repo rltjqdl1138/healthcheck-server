@@ -49,9 +49,9 @@ app.post("/",(req, res)=>{
     const list = Object.keys(map).map( item => {
         const parsed_key = item.split(":")
         return  {
+            ...map[item],
             address: parsed_key[0],
             port: parsed_key[1],
-            ...map[item]
         }
     },[])
 
@@ -75,16 +75,16 @@ const map = {
     "123.123.123.123:8000":{
         info:"gameserver",
         tags:["game"],
-        ttl:10
+        ttl:9999999
     },
     "123.123.123.123:8001":{
         info:"gameserver",
         tags:["game"],
-        ttl:10
+        ttl:9999999
     },
     "123.123.123.123:8002":{
         info:"gameserver",
         tags:["game"],
-        ttl:10
+        ttl:9999999
     },
 }
