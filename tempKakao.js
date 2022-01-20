@@ -29,7 +29,7 @@ app.post("/test",(req,res)=>{
     res.setHeader('Content-Type', 'application/json');
     res.end(req.body)
 })
-app.post("/auth/kakao/logout",async (req, res)=>{
+app.get("/auth/kakao/logout",async (req, res)=>{
     res.setHeader('Content-Type', 'application/json');
     const {id} = req.body
     const accessToken = MAP[id]
@@ -37,7 +37,6 @@ app.post("/auth/kakao/logout",async (req, res)=>{
     if(!accessToken)
         return res.status(401).end()
     delete MAP[id]
-
     const response = await fetch("https://kapi.kakao.com/v1/user/logout",
     {
         method:'post',
