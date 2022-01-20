@@ -1,7 +1,7 @@
 const express = require('express')
 const fetch = require('node-fetch')
 const app = express()
-const PORT = 8100
+const PORT = 8000
 const KAKAO_REST_KEY = "21b2924ede1c48a36cec40f7b08d9a6b"
 
 app.use(express.json())
