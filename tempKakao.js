@@ -1,7 +1,7 @@
 const express = require('express')
 const fetch = require('node-fetch')
 const app = express()
-const PORT = 8000
+const PORT = 8100
 const KAKAO_REST_KEY = "21b2924ede1c48a36cec40f7b08d9a6b"
 const MAP = {
 }
@@ -23,40 +23,31 @@ app.get("/test",async (req, res)=>{
 
     data.access_token = bodyFromKakao.access_token
    
-    return res.end( makeHTMLForUnreal({ httpStatus:200, ...data}))
+    return res.end( makeHTMLForUnreal("login", { httpStatus:200, ...data}))
 })
 app.post("/test",(req,res)=>{
     res.setHeader('Content-Type', 'application/json');
     res.end(req.body)
 })
 app.get("/auth/kakao/logout",async (req, res)=>{
-    res.setHeader('Content-Type', 'application/json');
-    const {id} = req.body
+    res.setHeader('Content-Type', 'text/html');
+    const id = req.query.state
+
     const accessToken = MAP[id]
-    
     if(!accessToken)
-        return res.status(401).end()
-    delete MAP[id]
-    const response = await fetch("https://kapi.kakao.com/v1/user/logout",
-    {
-        method:'post',
-        headers:{
-            'Content-type':"application/x-www-form-urlencoded",
-            'Authorization': `Bearer ${accessToken}`
-        }
-    })
-    const data = await response.json()
-    res.json(data)
+        delete MAP[id]
+
+    res.end(makeHTMLForUnreal("logout", { httpStatus:200 }))
 })
 
-const makeHTMLForUnreal = (data)=>{
+const makeHTMLForUnreal = (functionKey, data)=>{
     const FullHTML = `<!DOCTYPE html>
     <html>
     <header>
         <meta charset="utf-8">
     </header>
     <body>
-        <script>ue.kakao.authorize('${JSON.stringify(data)}').then(function(){});</script>
+        <script>ue.kakao.${functionKey}('${JSON.stringify(data)}').then(function(){});</script>
     </body>
     </html>`
     return FullHTML
