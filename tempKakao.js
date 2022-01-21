@@ -40,6 +40,19 @@ app.get("/auth/kakao/logout",async (req, res)=>{
     res.end(makeHTMLForUnreal("logout", { httpStatus:200 }))
 })
 
+app.get("/auth/kakao/check", async(req, res)=>{
+    const accessToken = req.query.token
+    
+    try{
+        const data = await getDataFromKakao(accessToken)
+        console.log(data)
+        if(!data.id) throw new Error()
+        return res.json(data)
+    }catch(e){
+        return res.status(401).end()
+    }
+})
+
 const makeHTMLForUnreal = (functionKey, data)=>{
     const FullHTML = `<!DOCTYPE html>
     <html>
