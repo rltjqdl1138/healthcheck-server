@@ -1,35 +1,43 @@
 const express = require('express')
+const router = express.Router()
+const crypto = require('crypto')
 const fetch = require('node-fetch')
-const app = express()
-const PORT = 8000
 const KAKAO_REST_KEY = "21b2924ede1c48a36cec40f7b08d9a6b"
-const MAP = {
-}
-app.use(express.json())
-app.use(express.urlencoded({extended:false}))
+const MAP = {}
+const USER_MAP = require('./USER')
+const PORT = 8000
+/*
 
-app.get("/test",async (req, res)=>{
+https://kauth.kakao.com/oauth/authorize?client_id=21b2924ede1c48a36cec40f7b08d9a6b&redirect_uri=http://1.221.216.110:8000/test&response_type=code
+
+https://kauth.kakao.com/oauth/logout?client_id=21b2924ede1c48a36cec40f7b08d9a6b&logout_redirect_uri=http://1.221.216.110:8000/auth/kakao/logout&response_type=code
+
+
+
+https://kauth.kakao.com/oauth/authorize?client_id=21b2924ede1c48a36cec40f7b08d9a6b&redirect_uri=http://1.221.216.110:8100/auth/kakao/login&response_type=code
+
+https://kauth.kakao.com/oauth/logout?client_id=21b2924ede1c48a36cec40f7b08d9a6b&logout_redirect_uri=http://1.221.216.110:8100/auth/kakao/logout&response_type=code&state=123123
+
+*/
+const is_test = false
+
+router.get("/login",async (req, res)=>{
     res.setHeader('Content-Type', 'text/html');
     if(req.query.error)
-        return res.end( makeHTMLForUnreal({
-            httpStatus:401,
-            ...req.query
-        }) )
+        return res.end( makeHTMLFunction({httpStatus:401,...req.query}) )
+
     const {code} = req.query
     
     const bodyFromKakao = await getAccessTokenFromKakao(code)
     const data = await getDataFromKakao(bodyFromKakao.access_token)
+    data.nonce = crypto.randomInt(10000)
+    USER_MAP[data.id] = data
     MAP[data.id] = bodyFromKakao.access_token
-
     data.access_token = bodyFromKakao.access_token
-   
-    return res.end( makeHTMLForUnreal("login", { httpStatus:200, ...data}))
+
+    return res.end( makeHTMLFunction( { httpStatus:200, ...data}, "login"))
 })
-app.post("/test",(req,res)=>{
-    res.setHeader('Content-Type', 'application/json');
-    res.end(req.body)
-})
-app.get("/auth/kakao/logout",async (req, res)=>{
+router.get("/logout",async (req, res)=>{
     res.setHeader('Content-Type', 'text/html');
     const id = req.query.state
 
@@ -37,15 +45,13 @@ app.get("/auth/kakao/logout",async (req, res)=>{
     if(!accessToken)
         delete MAP[id]
 
-    res.end(makeHTMLForUnreal("logout", { httpStatus:200 }))
+    res.end(makeHTMLFunction( { httpStatus:200 }, "logout"))
 })
 
-app.get("/auth/kakao/check", async(req, res)=>{
+router.get("/check", async(req, res)=>{
     const accessToken = req.query.token
-    
     try{
         const data = await getDataFromKakao(accessToken)
-        console.log(data)
         if(!data.id) throw new Error()
         return res.json(data)
     }catch(e){
@@ -53,7 +59,7 @@ app.get("/auth/kakao/check", async(req, res)=>{
     }
 })
 
-const makeHTMLForUnreal = (functionKey, data)=>{
+const makeHTMLForUnreal = ( data, functionKey)=>{
     const FullHTML = `<!DOCTYPE html>
     <html>
     <header>
@@ -65,6 +71,23 @@ const makeHTMLForUnreal = (functionKey, data)=>{
     </html>`
     return FullHTML
 }
+
+const makeHTMLForWeb = (data)=>{
+    const tags = Object.keys(data).map( e => `<p>${e}: ${data[e]}</p>`)
+
+    const FullHTML = `<!DOCTYPE html>
+    <html>
+    <header>
+        <meta charset="utf-8">
+    </header>
+    <body>
+        ${tags.join("\n")}
+    </body>
+    </html>`
+    return FullHTML
+}
+
+const makeHTMLFunction = is_test ? makeHTMLForWeb : makeHTMLForUnreal 
 
 const formatting = (body)=>{
     const formBody = []
@@ -92,7 +115,7 @@ const getAccessTokenFromKakao = async(code)=>{
     const body = {
         "grant_type":   "authorization_code",
         "client_id":    KAKAO_REST_KEY,
-        "redirect_uri": `http://1.221.216.110:${PORT}/test`,
+        "redirect_uri": `http://1.221.216.110:${PORT}/auth/kakao/login`,
         "code":         code
     }
 
@@ -105,5 +128,5 @@ const getAccessTokenFromKakao = async(code)=>{
     return data
 }
 
-app.listen( PORT, ()=>console.log('Server is running on '+PORT))
+module.exports = router
 

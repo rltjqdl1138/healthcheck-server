@@ -1,0 +1,111 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+        <script>
+            var user;
+            function tempNonce(nonce){
+                return `Seoul Metabus Sign up\nNonce:${nonce}`
+            }
+            async function kakaoLoginCheck(){
+                user = await fetch('/user/me')
+                    .then(response => response.json())
+                    .catch(e => console.log)
+                document.getElementById("userId").textContent = `ID: ${user.id}`
+                document.getElementById("metaAddress").textContent = `주소: ${user.walletAddress}`
+                
+            }
+            async function kakaoLogin(){
+                window.open("/login",'카카오 로그인',{ })
+            }
+            async function kakaoLogout(){
+                window.open("/logout",'카카오 로그아웃',{ })
+                document.getElementById("userId").textContent = `로그인이 필요합니다.`
+            }
+            async function clicking(){
+                if(!user || !user.id) return alert("유저 정보가 필요합니다.")
+                else if(user.walletAddress) return alert("이미 연동된 계정입니다.")
+                const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                const account = accounts[0];
+                const nonce = tempNonce(user.nonce)
+                let sign = await web3.eth.personal.sign( nonce, account, "")
+                await fetch("/test?sign="+sign,{ method: 'get' })
+            }
+            if(typeof web3 !== undefined){
+                web3 = new Web3(web3.currentProvider)
+            }else{
+                web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:4000"))
+            }
+
+            if(typeof window.ethereum !== undefined){
+                console.log("MetaMask is installed!!")
+            }
+
+            async function test2(){
+                const owner ='0x7a9fe22691c811ea339d9b73150e6911a5343dca'
+                //const owner =  user ? user.walletAddress : '0x7a9fe22691c811ea339d9b73150e6911a5343dca'
+                const dataList = await fetch(`https://api.opensea.io/api/v1/assets?order_direction=desc&owner=${owner}&offset=0`)
+                    .then(response => response.json())
+                    .catch(e => console.log)
+                const {assets} = dataList
+                //const array = assets.reduce( (prev, e) => e.owner.address === "0x0000000000000000000000000000000000000000" ? [...prev, e] : prev,[])
+                const array = assets
+                console.log(array)
+                const here = document.getElementById("here")
+                array.map( e =>{
+                    const newElement = document.createElement("div")
+                    const id = document.createElement("h4")
+                    id.textContent = String(e.id)
+
+                    const name = document.createElement("p")
+                    name.textContent = e.name;
+
+                    const creator = document.createElement("p")
+                    if(e.creator && e.creator.user && e.creator.user.username)
+                        creator.textContent =`Creator: ${e.creator.user.username}`;
+                    else
+                        console.log(e)
+
+                    const img = document.createElement("img")
+                    img.src = e.image_preview_url
+
+
+
+                    newElement.appendChild(id)
+                    newElement.appendChild(img)
+                    newElement.appendChild(name)
+                    newElement.appendChild(creator)
+
+                    document.body.insertBefore(newElement, here)
+                })
+            }
+
+        </script>
+        <script>
+            async function addNewErc721Token(){
+                const tokenContract = await new web3.eth.Contract(erc721Abi, newErc721addr)
+            }
+        </script>
+    </head>
+    <body>
+        <div>
+            <button onClick="kakaoLogin()" class="enableEthereumButton">KakaoLogin</button>
+            <button onClick="kakaoLogout()" class="enableEthereumButton">KakaoLogout</button>
+        </div>
+        <div>
+            <button onClick="clicking()" class="enableEthereumButton">Connect Ethereum</button>
+            <button onClick="test2()" class="enableEthereumButton">Test2 function</button>
+        </div>
+        <div>
+            <button onClick="kakaoLoginCheck()" class="enableEthereumButton">갱신</button>
+            카카오 로그인 or 메타마스크 연동 후 눌러주세요
+        </div>
+        <div>
+            <h3 id="userId">로그인이 필요합니다.</h3>
+            <h3 id="metaAddress"></h3>
+        </div>
+        <div id="here">
+
+        </div>
+    </body>
+</html>
