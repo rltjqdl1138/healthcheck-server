@@ -35,9 +35,7 @@ app.get("/scroll",(req, res)=>{
 app.get("/video",(req, res)=>{
     const map = []
     map[0] = "http://www.youtube.com/embed/yL1jh7RyRMw?rel=0?version=3&autoplay=1&controls=0&&showinfo=0&loop=1&cc_load_policy=0&cc_lang_pref=no"
-    map[1] = "https://www.youtube.com/watch?v=lYJ17n_oUkA?rel=0?version=3&autoplay=1&controls=0&&showinfo=0&loop=1&cc_load_policy=0&cc_lang_pref=no"
-    map[2] = "https://www.youtube.com/watch?v=esWeHZ_rfis?rel=0?version=3&autoplay=1&controls=0&&showinfo=0&loop=1&cc_load_policy=0&cc_lang_pref=no"
-
+    map[1] = "https://www.youtube.com/embed/lYJ17n_oUkA?rel=0?version=3&autoplay=1&controls=0&&showinfo=0&loop=1&cc_load_policy=0&cc_lang_pref=no"
 
     const num = parseInt(req.query.number,10)
     if(map[num])
