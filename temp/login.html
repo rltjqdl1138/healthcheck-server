@@ -1,6 +1,7 @@
 <html>
     <script>
-        const KAKAO_URL = "https://kauth.kakao.com/oauth/authorize?client_id=21b2924ede1c48a36cec40f7b08d9a6b&redirect_uri=http://1.221.216.110:8100/auth/kakao/login&response_type=code"
+        const PORT = 8000
+        const KAKAO_URL = `https://kauth.kakao.com/oauth/authorize?client_id=21b2924ede1c48a36cec40f7b08d9a6b&redirect_uri=http://1.221.216.110:${PORT}/auth/kakao/login&response_type=code`
         window.location.href=KAKAO_URL
     </script>
 </html>
