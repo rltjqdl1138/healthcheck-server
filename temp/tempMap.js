@@ -61,7 +61,7 @@ router.get("/explore",(req,res)=>{
             function teleport(lat, lng){
                 const data = {lat, lng}
                 try{
-                    eu.kakao.teleport(JSON.stringify(data))
+                    ue.kakao.teleport(JSON.stringify(data))
                 }catch(e){
                     console.log(data)
                 }
