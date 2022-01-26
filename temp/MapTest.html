@@ -43,8 +43,8 @@
                 // 클릭한 위도, 경도 정보를 가져옵니다 
                 var latlng = mouseEvent.latLng;
                 const data = {
-                    y: latlng.getLat(),
-                    x: latlng.getLng() 
+                    lat: latlng.getLat(),
+                    lng: latlng.getLng() 
                 }
                 try{
                     ue.kakao.teleport(JSON.stringify(data)).then(function(){})
