@@ -1,4 +1,4 @@
-const PORT = 8100
+const PORT = 8000
 
 const util = require('ethereumjs-util')
 const express = require('express')
