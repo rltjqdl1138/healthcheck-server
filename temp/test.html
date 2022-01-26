@@ -3,6 +3,14 @@
         <meta charset="utf-8">
         <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
         <script>
+            window.addEventListener('keydown', function(event) {
+                const key = event.key;
+                try{
+                    if (key === "Tab") ue.kakao.tab()
+                }catch(e){
+                    console.log(tab)
+                }
+            })
             var user;
             function tempNonce(nonce){
                 return `Seoul Metabus Sign up\nNonce:${nonce}`

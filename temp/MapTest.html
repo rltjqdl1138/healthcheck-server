@@ -10,24 +10,17 @@
     <!-- 지도를 표시할 div 입니다 -->
     <div id="map" style="width:100%;height:650px;"></div>
         <script>
+            
+            window.addEventListener('keydown', function(event) {
+                const key = event.key;
+                try{
+                    if (key === "Tab") ue.kakao.tab()
+                }catch(e){
+                    console.log(tab)
+                }
+            });
             function panToCitihall() {
                 var moveLatLon = new kakao.maps.LatLng(37.566672503327894, 126.97841391867198);
-                 map.panTo(moveLatLon);            
-            }
-            function panToHall() {
-                var moveLatLon = new kakao.maps.LatLng(37.56557966662658,  126.97802497578645);
-                 map.panTo(moveLatLon);            
-            }
-            function panTo3df() {
-                var moveLatLon = new kakao.maps.LatLng(37.58159717747926, 126.88710612585542);
-                 map.panTo(moveLatLon);            
-            }
-            function panToSung() {
-                var moveLatLon = new kakao.maps.LatLng(37.56000961903046, 126.97529346928171);
-                 map.panTo(moveLatLon);            
-            }
-            function panToDuck() {
-                var moveLatLon = new kakao.maps.LatLng(37.56579893700849, 126.97514909748877);
                  map.panTo(moveLatLon);            
             }
             var mapContainer = document.getElementById('map'), // 지도를 표시할 div 

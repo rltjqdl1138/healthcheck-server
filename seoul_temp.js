@@ -1,4 +1,4 @@
-const PORT = 8000
+const PORT = 8100
 
 const util = require('ethereumjs-util')
 const express = require('express')
@@ -21,6 +21,13 @@ app.get("/login",(req, res)=>{
 })
 app.get("/logout",(req, res)=>{
     const html = fs.readFileSync("./temp/logout.html")
+    res.setHeader('Content-Type', 'text/html');
+    res.write(html)
+    res.end()
+})
+
+app.get("/scroll",(req, res)=>{
+    const html = fs.readFileSync("./temp/scrollTest.html")
     res.setHeader('Content-Type', 'text/html');
     res.write(html)
     res.end()

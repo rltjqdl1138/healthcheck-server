@@ -58,6 +58,15 @@ router.get("/explore",(req,res)=>{
     </head>
     <body>
         <script>
+            window.addEventListener('keydown', function(event) {
+                const key = event.key;
+                try{
+                    if (key === "Tab") ue.kakao.tab()
+                }catch(e){
+                    console.log(tab)
+                }
+                
+            });
             function teleport(lat, lng){
                 const data = {lat, lng}
                 try{
