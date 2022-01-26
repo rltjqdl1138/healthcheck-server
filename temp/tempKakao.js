@@ -28,9 +28,7 @@ router.get("/login",async (req, res)=>{
 })
 router.get("/logout",async (req, res)=>{
     res.setHeader('Content-Type', 'text/html');
-    console.log(USER_MAP)
     Object.keys(USER_MAP).forEach( e => delete USER_MAP[e])
-    console.log(USER_MAP)
     res.end(makeHTMLFunction( { httpStatus:200 }, "logout"))
 })
 
