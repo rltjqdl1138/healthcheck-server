@@ -8,7 +8,7 @@
     </head>
     <body>
     <!-- 지도를 표시할 div 입니다 -->
-    <div id="map" style="width:100%;height:700px;"></div>
+    <div id="map" style="width:100%;height:650px;"></div>
         <script>
             function panToCitihall() {
                 var moveLatLon = new kakao.maps.LatLng(37.566672503327894, 126.97841391867198);
@@ -54,12 +54,5 @@
             });
 
         </script>
-        <div>
-            <button onClick="panToCitihall()">시청</button>
-            <button onClick="panToHall()">광장</button>
-            <button onClick="panTo3df()">3DF</button>
-            <button onClick="panToDuck()">덕수궁</button>
-            <button onClick="panToSung()">숭례문</button>
-        </div>
     </body>
 </html>
