@@ -48,6 +48,16 @@ const makeHTMLForUnreal = ( data, functionKey)=>{
     <html>
     <header>
         <meta charset="utf-8">
+        <script>
+            window.addEventListener('keydown', function(event) {
+                const key = event.key;
+                try{
+                    if (key === "Tab") ue.kakao.tab()
+                }catch(e){
+                    console.log("tab")
+                }
+            });
+        </script>
     </header>
     <body>
         <script>ue.kakao.${functionKey}('${JSON.stringify(data)}').then(function(){});</script>

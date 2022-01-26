@@ -63,7 +63,7 @@ router.get("/explore",(req,res)=>{
                 try{
                     if (key === "Tab") ue.kakao.tab()
                 }catch(e){
-                    console.log(tab)
+                    console.log("tab")
                 }
                 
             });
