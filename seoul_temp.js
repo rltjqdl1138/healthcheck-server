@@ -1,8 +1,11 @@
+const PORT = 8000
+
 const util = require('ethereumjs-util')
 const express = require('express')
 const app = express()
 const fs = require('fs')
 const kakao = require('./temp/tempKakao')
+const tempMap = require('./temp/tempMap')
 const USER_MAP = require('./temp/USER')
 app.get("/",(req, res)=>{
     const html = fs.readFileSync("./temp/test.html")
@@ -22,6 +25,7 @@ app.get("/logout",(req, res)=>{
     res.write(html)
     res.end()
 })
+app.use('/map', tempMap)
 app.use('/auth/kakao', kakao)
 app.get("/test",(req, res)=>{
     const KEY = Object.keys(USER_MAP)[0]
@@ -44,7 +48,7 @@ app.get("/user/me",(req, res)=>{
     return res.json(USER_MAP[KEY])
 })
 
-app.listen(8000, ()=>{
+app.listen(PORT, ()=>{
     console.log('listen on 8000')
 })
 

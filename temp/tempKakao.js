@@ -6,19 +6,6 @@ const KAKAO_REST_KEY = "21b2924ede1c48a36cec40f7b08d9a6b"
 const MAP = {}
 const USER_MAP = require('./USER')
 const PORT = 8000
-/*
-
-https://kauth.kakao.com/oauth/authorize?client_id=21b2924ede1c48a36cec40f7b08d9a6b&redirect_uri=http://1.221.216.110:8000/test&response_type=code
-
-https://kauth.kakao.com/oauth/logout?client_id=21b2924ede1c48a36cec40f7b08d9a6b&logout_redirect_uri=http://1.221.216.110:8000/auth/kakao/logout&response_type=code
-
-
-
-https://kauth.kakao.com/oauth/authorize?client_id=21b2924ede1c48a36cec40f7b08d9a6b&redirect_uri=http://1.221.216.110:8100/auth/kakao/login&response_type=code
-
-https://kauth.kakao.com/oauth/logout?client_id=21b2924ede1c48a36cec40f7b08d9a6b&logout_redirect_uri=http://1.221.216.110:8100/auth/kakao/logout&response_type=code&state=123123
-
-*/
 const is_test = false
 
 router.get("/login",async (req, res)=>{
@@ -30,8 +17,10 @@ router.get("/login",async (req, res)=>{
     
     const bodyFromKakao = await getAccessTokenFromKakao(code)
     const data = await getDataFromKakao(bodyFromKakao.access_token)
-    data.nonce = crypto.randomInt(10000)
-    USER_MAP[data.id] = data
+    if(!USER_MAP[data.id]){
+        data.nonce = crypto.randomInt(10000)
+        USER_MAP[data.id] = data
+    }
     MAP[data.id] = bodyFromKakao.access_token
     data.access_token = bodyFromKakao.access_token
 
@@ -40,11 +29,12 @@ router.get("/login",async (req, res)=>{
 router.get("/logout",async (req, res)=>{
     res.setHeader('Content-Type', 'text/html');
     const id = req.query.state
-
+    console.log(id)
     const accessToken = MAP[id]
-    if(!accessToken)
+    if(accessToken){
         delete MAP[id]
-
+        delete USER_MAP[id]
+    }
     res.end(makeHTMLFunction( { httpStatus:200 }, "logout"))
 })
 

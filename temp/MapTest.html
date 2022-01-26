@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=784db2257c4ec6bc988d85c053ace09b"></script>
+        <title>지도 생성하기</title>
+        
+    </head>
+    <body>
+    <!-- 지도를 표시할 div 입니다 -->
+    <div id="map" style="width:100%;height:700px;"></div>
+        <script>
+            function panToCitihall() {
+                var moveLatLon = new kakao.maps.LatLng(37.566672503327894, 126.97841391867198);
+                 map.panTo(moveLatLon);            
+            }
+            function panToHall() {
+                var moveLatLon = new kakao.maps.LatLng(37.56557966662658,  126.97802497578645);
+                 map.panTo(moveLatLon);            
+            }
+            function panTo3df() {
+                var moveLatLon = new kakao.maps.LatLng(37.58159717747926, 126.88710612585542);
+                 map.panTo(moveLatLon);            
+            }
+            function panToSung() {
+                var moveLatLon = new kakao.maps.LatLng(37.56000961903046, 126.97529346928171);
+                 map.panTo(moveLatLon);            
+            }
+            function panToDuck() {
+                var moveLatLon = new kakao.maps.LatLng(37.56579893700849, 126.97514909748877);
+                 map.panTo(moveLatLon);            
+            }
+            var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+                mapOption = { 
+                    center: new kakao.maps.LatLng(37.56557966662658,  126.97802497578645), // 지도의 중심좌표
+                    level: 2 // 지도의 확대 레벨
+                };
+
+            // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+            var map = new kakao.maps.Map(mapContainer, mapOption);
+
+            kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
+                // 클릭한 위도, 경도 정보를 가져옵니다 
+                var latlng = mouseEvent.latLng;
+                const data = {
+                    y: latlng.getLat(),
+                    x: latlng.getLng() 
+                }
+                try{
+                    ue.kakao.teleport(JSON.stringify(data)).then(function(){})
+                }catch(e){
+                    console.log(data)
+                }
+            });
+
+        </script>
+        <div>
+            <button onClick="panToCitihall()">시청</button>
+            <button onClick="panToHall()">광장</button>
+            <button onClick="panTo3df()">3DF</button>
+            <button onClick="panToDuck()">덕수궁</button>
+            <button onClick="panToSung()">숭례문</button>
+        </div>
+    </body>
+</html>
