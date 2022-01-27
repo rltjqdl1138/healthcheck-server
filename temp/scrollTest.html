@@ -42,8 +42,14 @@
             
 
             document.addEventListener('scroll', (e)=>{
-                if(window.scrollY == 0)
+                if(window.scrollY == 0){
                     changeToBefore()
+                }
+                else if(window.scrollY > 100){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false
+                }
                 else
                     changeToAfter()
                 
