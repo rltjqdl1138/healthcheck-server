@@ -14,16 +14,12 @@ app.get("/",(req, res)=>{
     res.end()
 })
 app.get("/login",(req, res)=>{
-    const html = fs.readFileSync("./temp/login.html")
     res.setHeader('Content-Type', 'text/html');
-    res.write(html)
-    res.end()
+    res.redirect(`https://kauth.kakao.com/oauth/authorize?client_id=379993434257f68df05bd2f9d2e4416a&redirect_uri=http://1.221.216.110:${PORT}/auth/kakao/login&response_type=code`)
 })
 app.get("/logout",(req, res)=>{
-    const html = fs.readFileSync("./temp/logout.html")
     res.setHeader('Content-Type', 'text/html');
-    res.write(html)
-    res.end()
+    res.redirect( `https://kauth.kakao.com/oauth/logout?client_id=379993434257f68df05bd2f9d2e4416a&logout_redirect_uri=http://1.221.216.110:${PORT}/auth/kakao/logout&response_type=code&state=123123`)
 })
 
 app.get("/scroll",(req, res)=>{
