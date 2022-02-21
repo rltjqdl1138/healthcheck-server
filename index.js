@@ -1,7 +1,7 @@
 const express = require('express')
 const cron = require('node-cron')
 const app = express()
-const adminApp = require('admin')
+const adminApp = require('./admin')
 
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
