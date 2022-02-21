@@ -4,7 +4,7 @@ const fetch = require('node-fetch')
 const cron = require('node-cron')
 
 const app = express()
-const PORT = 9002
+const PORT = 8002
 const HEALTH_URL = "http://192.168.0.52"
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
