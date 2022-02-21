@@ -5,7 +5,7 @@ const cron = require('node-cron')
 
 const app = express()
 const PORT = 9002
-const HEALTH_URL = "http://127.0.0.1:8001"
+const HEALTH_URL = "http://192.168.0.52:9001"
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
 
