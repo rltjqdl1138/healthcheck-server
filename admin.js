@@ -5,7 +5,7 @@ const cron = require('node-cron')
 
 const app = express()
 const PORT = 9002
-const HEALTH_URL = "http://192.168.0.52"
+const HEALTH_URL = "http://127.0.0.1:8001"
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
 
@@ -24,6 +24,7 @@ app.get('/notice',(req, res)=>{
 app.get('/config', (req, res)=>{
     res.json(config)
 })
+
 app.post('/config',async (req, res)=>{
     const {serverCheck, checkEndedAt} = req.body
     config.serverCheck = serverCheck
@@ -42,10 +43,12 @@ app.post('/config',async (req, res)=>{
     })
     res.end()
 })
-app.listen( PORT, ()=>{
+
+app.listen( 8002, ()=>{
     postRequestToHealthServer()
     console.log('Admin Server is running on 9002')
 })
+
 cron.schedule("*/10 * * * * *", postRequestToHealthServer)
 
 function postRequestToHealthServer(){

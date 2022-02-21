@@ -1,6 +1,7 @@
 const express = require('express')
 const cron = require('node-cron')
 const app = express()
+const adminApp = require('admin')
 
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
@@ -13,7 +14,7 @@ app.get("/*",(req, res)=>{
     const list = Object.keys(map).reduce( (prev, item) => {
         const parsed_key = item.split(":")
 
-        if(tags.length == 0)
+        if(tags.length === 0)
             return [...prev, {
                 ...map[item],
                 address: parsed_key[0],
@@ -35,31 +36,35 @@ app.get("/*",(req, res)=>{
     res.end(JSON.stringify({list}))
 })
 app.post("/",(req, res)=>{
-    const remoteAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+    let remoteAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress
     const { port, info, tags} = req.body
+    remoteAddress = remoteAddress.replace("::ffff:","")
     const key = remoteAddress + ":" + port
     if( port ){
         if(!map[key]) map[key] = {}
-        map[key] = { ...req.body,
+        map[key] = {
+            ...req.body,
             info    : info || map[key].info,
             tags    : tags || map[key].tags || [],
-            ttl: 10 }
+            ttl: 10
+        }
     }
 
     const list = Object.keys(map).map( item => {
-        const parsed_key = item.split(":")
+        const [address, port] = item.split(":")
         return  {
             ...map[item],
-            address: parsed_key[0],
-            port: parsed_key[1],
+            address,
+            port,
         }
-    },[])
+    })
 
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({list}))
 })
 
-app.listen( 9001, ()=>console.log('Server is running on 9001'))
+app.listen( 8001, ()=>console.log('Server is running on 8001'))
+
 cron.schedule("*/10 * * * * *", ()=>decreaseTTL())
 const decreaseTTL = ()=>{
     console.log(`============= Server Status =============`)
